@@ -35,7 +35,7 @@ public class User{
     @JoinColumn(name = "role_idx")
     private Role role;
 
-    private UserResponse toDto(){
+    public UserResponse toDto(){
         return UserResponse.builder()
                 .idx(this.idx)
                 .name(this.name)

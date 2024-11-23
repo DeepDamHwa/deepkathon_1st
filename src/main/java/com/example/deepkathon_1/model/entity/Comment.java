@@ -22,7 +22,7 @@ public class Comment extends BaseEntity{
     private Long idx;
 
     private String content;
-    private Boolean isMine;
+//    private Boolean isMine;
 
     @ManyToOne
     @JoinColumn(name = "post_idx")
@@ -42,14 +42,14 @@ public class Comment extends BaseEntity{
     @JoinColumn(name = "parent_idx")
     private Comment parent;
 
-    private CommentResponse toDto(User user, Boolean isMine, List<EmojiResponse> emojis, List<ReplyResponse> replies){
+    public CommentResponse toDto(Boolean isMine, List<EmojiResponse> emojis, List<ReplyResponse> replies){
         return CommentResponse.builder()
                 .idx(this.idx)
                 .content(this.content)
                 .createdAt(this.getCreatedAt())
-                .writerIdx(user.getIdx())
-                .writerRole(user.getRole().getName())
-                .writerName(user.getName())
+                .writerIdx(this.getUser().getIdx())
+                .writerRole(this.getUser().getRole().getName())
+                .writerName(this.getUser().getName())
                 .isMine(isMine)
                 .emojis(emojis)
                 .replies(replies)
