@@ -6,6 +6,9 @@ import lombok.*;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
 public class CommentResponse {
     private Long idx;
     private Long writerIdx;

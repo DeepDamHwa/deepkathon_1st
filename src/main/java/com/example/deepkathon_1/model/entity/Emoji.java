@@ -20,7 +20,7 @@ public class Emoji {
     @OneToOne(mappedBy = "emoji")
     private Interaction interaction;
 
-    private EmojiResponse toDto(Integer count, Boolean isMine){
+    public EmojiResponse toDto(Integer count, Boolean isMine){
         return EmojiResponse.builder()
                 .idx(this.idx)
                 .count(count)

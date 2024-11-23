@@ -42,7 +42,7 @@ public class Comment extends BaseEntity{
     @JoinColumn(name = "parent_idx")
     private Comment parent;
 
-    private CommentResponse toDto(User user, Boolean isMine, List<EmojiResponse> emojis, List<ReplyResponse> replies){
+    public CommentResponse toDto(User user, Boolean isMine, List<EmojiResponse> emojis, List<ReplyResponse> replies){
         return CommentResponse.builder()
                 .idx(this.idx)
                 .content(this.content)
@@ -56,7 +56,7 @@ public class Comment extends BaseEntity{
                 .build();
     }
 
-    private ReplyResponse toDto(User user, Boolean isMine, List<EmojiResponse> emojis){
+    public ReplyResponse toDto(User user, Boolean isMine, List<EmojiResponse> emojis){
         return ReplyResponse.builder()
                 .idx(this.idx)
                 .content(this.content)
