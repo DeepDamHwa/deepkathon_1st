@@ -26,10 +26,8 @@ public class DeepService {
     private final EmojiRepository emojiRepository;
     public List<CommentResponse> getComments(Long userIdx, Long postIdx) {
 
-        //한방 쿼리로 다 조회
-        //근데 여기서는 userIdx는 필요없지 않나?
-        List<Comment> comments = commentRepository.findAllByUserIdxAndPostIdx(userIdx,postIdx);
-
+        //최상위 댓글만 조회 (parent Idx = null)
+        List<Comment> comments = commentRepository.findAllByPostIdxAndParentIdx(postIdx, null);
 
         List<CommentResponse> responses = new ArrayList<>();
 
@@ -43,6 +41,8 @@ public class DeepService {
             // 5                1            2         5
             // 6                1            3         5
 
+
+            //===============emoji response list==================
 
             //comment의 interaction 리스트를 emoji로 groupby 해서 가져오기
             // interaction_idx  comment_idx  emoji_idx
@@ -66,15 +66,38 @@ public class DeepService {
                     userResponses.add(user.getUser().toDto());
                 }
 
-                boolean isMine = users.contains(userIdx);
-
-                Integer count = users.size();
-
-                emojis.add(inte.getEmoji().toDto(count, isMine, userResponses));
+                emojis.add(inte.getEmoji().toDto(users.size(), users.contains(userIdx), userResponses));
 
             }
 
-            responses.add(comment.toDto(true, emojis, null));
+            //===============replies response list==================
+
+            //해당 댓글이 부모인 댓글 조회
+            List<Comment> replies = commentRepository.findAllByPostIdxAndParentIdx(postIdx, comment.getIdx());
+
+            List<ReplyResponse> replyResponses = new ArrayList<>();
+
+            //53번줄 과정 똑같이 반복
+            for (Comment reply : replies) {
+                List<Interaction> replyInteractions = interactionRepository.findAllByCommentGroupByEmojiIdx(reply);
+
+                List<EmojiResponse> replyEmojis = new ArrayList<>();
+
+                for (Interaction inte : replyInteractions) {
+                    List<Interaction> users  = interactionRepository.findByEmojiAndComment(inte.getEmoji(), comment);
+
+                    List<UserResponse> userResponses = new ArrayList<>();
+                    for (Interaction user : users) {
+                        userResponses.add(user.getUser().toDto());
+                    }
+
+                    replyEmojis.add(inte.getEmoji().toDto(users.size(), users.contains(userIdx), userResponses));
+                }
+
+                replyResponses.add(reply.toDto(reply.getUser().getIdx()==userIdx, replyEmojis));
+            }
+
+            responses.add(comment.toDto(comment.getUser().getIdx()==userIdx, emojis, replyResponses));
 
         }
 
