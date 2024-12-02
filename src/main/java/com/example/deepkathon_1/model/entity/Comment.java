@@ -56,14 +56,14 @@ public class Comment extends BaseEntity{
                 .build();
     }
 
-    private ReplyResponse toDto(User user, Boolean isMine, List<EmojiResponse> emojis){
+    public ReplyResponse toDto(Boolean isMine, List<EmojiResponse> emojis){
         return ReplyResponse.builder()
                 .idx(this.idx)
                 .content(this.content)
                 .createdAt(this.getCreatedAt())
-                .writerIdx(user.getIdx())
-                .writerRole(user.getRole().getName())
-                .writerName(user.getName())
+                .writerIdx(this.user.getIdx())
+                .writerRole(this.user.getRole().getName())
+                .writerName(this.user.getName())
                 .isMine(isMine)
                 .emojis(emojis)
                 .build();
